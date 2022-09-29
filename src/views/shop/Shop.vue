@@ -13,7 +13,7 @@
       </div>
     </div>
     <ShopInfo :item="item" :hideBorder="true" v-show="item.imgUrl"/>
-    <Content />
+    <Content :shopName="item.name" />
     <Cart />
   </div>
 </template>
@@ -21,7 +21,7 @@
 <script>
 import { reactive, toRefs } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { get } from '../../utils/request'
+import { get } from '@/utils/request'
 import ShopInfo from '../../components/ShopInfo'
 import Content from './Content'
 import Cart from './Cart'

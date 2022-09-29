@@ -34,7 +34,7 @@
 <script>
 import { useRouter } from 'vue-router'
 import { reactive, toRefs } from 'vue'
-import { post } from '../../utils/request'
+import { post } from '@/utils/request'
 import Toast, { useToastEffect } from '../../components/Toast'
 
 // 处理注册相关逻辑

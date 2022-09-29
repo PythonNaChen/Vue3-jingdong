@@ -13,7 +13,7 @@
 
 <script>
 import { ref } from 'vue'
-import { get } from '../../utils/request'
+import { get } from '@/utils/request'
 import ShopInfo from '../../components/ShopInfo'
 
 const useNearbyListEffect = () => {
