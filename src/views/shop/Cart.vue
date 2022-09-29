@@ -1,8 +1,24 @@
 <template>
+  <div class="mask" v-if="showChart" />
   <div class="cart">
-    <div class="product">
+    <div class="product" v-if="showChart">
       <div class="product__header">
-
+        <div
+          class="product__header__all"
+          @click="() => setCartItemsChecked(shopId)"
+        >
+          <span
+            class="product__header__icon iconfont"
+            v-html="allChecked ? '&#xe652;': '&#xe6f7;'"
+          >
+          </span>
+          全选
+        </div>
+        <div
+          class="product__header__clear"
+          @click="() => cleanCartProducts(shopId)"
+        >清空购物车
+        </div>
       </div>
       <template
         v-for="item in productList"
@@ -16,10 +32,10 @@
           />
           <img class="product__item__img" :src="item.imgUrl" />
           <div class="product__item__detail">
-            <h4 class="product__item__title">{{item.name}}</h4>
+            <h4 class="product__item__title">{{ item.name }}</h4>
             <p class="product__item__price">
-              <span class="product__item__yen">&yen;</span>{{item.price}}
-              <span class="product__item__origin">&yen;{{item.oldPrice}}</span>
+              <span class="product__item__yen">&yen;</span>{{ item.price }}
+              <span class="product__item__origin">&yen;{{ item.oldPrice }}</span>
             </p>
           </div>
           <div class="product__number">
@@ -27,7 +43,7 @@
               class="product__number__minus"
               @click="() => { changeCartItemInfo(shopId, item._id, item, -1) }"
             >-</span>
-            {{item.count || 0}}
+            {{ item.count || 0 }}
             <span
               class="product__number__plus"
               @click="() => { changeCartItemInfo(shopId, item._id, item, 1) }"
@@ -41,6 +57,7 @@
         <img
           src="http://www.dell-lee.com/imgs/vue3/basket.png"
           class="check__icon__img"
+          @click="handleCartShowChange"
         />
         <div class="check__icon__tag">{{ total }}</div>
       </div>
@@ -53,18 +70,15 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-// 购物车相关逻辑
-import { useCommonEffect } from '@/views/shop/commonCartEffect'
+import { useCommonEffect } from './commonCartEffect'
 
 // 获取购物车信息逻辑
-const useCartEffect = () => {
+const useCartEffect = (shopId) => {
   const { changeCartItemInfo } = useCommonEffect()
   const store = useStore()
-  const route = useRoute()
-  const shopId = route.params.id
   const cartList = store.state.cartList
 
   const total = computed(() => {
@@ -93,8 +107,23 @@ const useCartEffect = () => {
     return count.toFixed(2)
   })
 
+  const allChecked = computed(() => {
+    const productList = cartList[shopId]
+    let result = true
+    if (productList) {
+      for (const i in productList) {
+        const product = productList[i]
+        if (product.count > 0 && !product.check) {
+          result = false
+        }
+      }
+    }
+    return result
+  })
+
   const productList = computed(() => {
-    return cartList[shopId] || []
+    const productList = cartList[shopId] || []
+    return productList
   })
 
   const changeCartItemChecked = (shopId, productId) => {
@@ -104,12 +133,23 @@ const useCartEffect = () => {
     })
   }
 
+  const cleanCartProducts = (shopId) => {
+    store.commit('cleanCartProducts', { shopId })
+  }
+
+  const setCartItemsChecked = (shopId) => {
+    store.commit('setCartItemsChecked', { shopId })
+  }
+
   return {
     total,
     price,
     productList,
+    cleanCartProducts,
+    allChecked,
     changeCartItemInfo,
-    changeCartItemChecked
+    changeCartItemChecked,
+    setCartItemsChecked
   }
 }
 
@@ -118,20 +158,34 @@ export default {
   setup () {
     const route = useRoute()
     const shopId = route.params.id
+    const showChart = ref(false)
+    const handleCartShowChange = () => {
+      showChart.value = !showChart.value
+    }
+
     const {
       total,
       price,
       productList,
+      allChecked,
+      cleanCartProducts,
       changeCartItemInfo,
-      changeCartItemChecked
-    } = useCartEffect()
+      changeCartItemChecked,
+      setCartItemsChecked
+    } = useCartEffect(shopId)
+
     return {
       total,
       price,
-      productList,
       shopId,
+      productList,
+      allChecked,
+      showChart,
+      cleanCartProducts,
       changeCartItemInfo,
-      changeCartItemChecked
+      changeCartItemChecked,
+      setCartItemsChecked,
+      handleCartShowChange
     }
   }
 }
@@ -141,11 +195,23 @@ export default {
 @import '../../style/viriables.scss';
 @import '../../style/mixins.scss';
 
+.mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  background: rgba(0, 0, 0, .5);
+  z-index: 1;
+}
+
 .cart {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 2;
+  background: #FFF;
 }
 
 .product {
@@ -154,8 +220,28 @@ export default {
   background: #FFF;
 
   &__header {
-    height: .52rem;
+    display: flex;
+    line-height: .52rem;
     border-bottom: 1px solid #F1F1F1;
+    font-size: .14rem;
+    color: #333;
+
+    &__all {
+      width: .64rem;
+      margin-left: .18rem;
+    }
+
+    &__icon {
+      display: inline-block;
+      color: #0091FF;
+      font-size: .2rem;
+    }
+
+    &__clear {
+      flex: 1;
+      margin-right: .16rem;
+      text-align: right;
+    }
   }
 
   &__item {

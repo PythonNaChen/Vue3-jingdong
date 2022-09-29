@@ -50,10 +50,30 @@ export default createStore({
       // 更新商铺信息
       state.cartList[shopId] = shopInfo
     },
+    // 购物车商品选中状态
     changeCartItemChecked (state, payload) {
-      const { shopId, productId } = payload
+      const {
+        shopId,
+        productId
+      } = payload
       const product = state.cartList[shopId][productId]
       product.check = !product.check
+    },
+    // 清空购物车
+    cleanCartProducts (state, payload) {
+      const { shopId } = payload
+      state.cartList[shopId] = {}
+    },
+    // 设置全选
+    setCartItemsChecked (state, payload) {
+      const { shopId } = payload
+      const products = state.cartList[shopId]
+      if (products) {
+        for (const key in products) {
+          const product = products[key]
+          product.check = true
+        }
+      }
     }
   },
   actions: {},
