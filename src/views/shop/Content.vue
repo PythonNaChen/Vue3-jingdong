@@ -7,7 +7,7 @@
         :key="item.name"
         @click="() => handleTabClick(item.tab)"
       >
-        {{item.name}}
+        {{ item.name }}
       </div>
     </div>
     <div class="product">
@@ -16,19 +16,25 @@
         v-for="item in list"
         :key="item._id"
       >
-        <img class="product__item__img" src="http://www.dell-lee.com/imgs/vue3/near.png" />
+        <img class="product__item__img" :src="item.imgUrl" />
         <div class="product__item__detail">
-          <h4 class="product__item__title">{{item.name}}</h4>
-          <p class="product__item__sales">月售 {{item.sales}} 件</p>
+          <h4 class="product__item__title">{{ item.name }}</h4>
+          <p class="product__item__sales">月售 {{ item.sales }} 件</p>
           <p class="product__item__price">
-            <span class="product__item__yen">&yen;</span>{{item.price}}
-            <span class="product__item__origin">&yen;{{item.oldPrice}}</span>
+            <span class="product__item__yen">&yen;</span>{{ item.price }}
+            <span class="product__item__origin">&yen;{{ item.oldPrice }}</span>
           </p>
         </div>
         <div class="product__number">
-          <span class="product__number__minus">-</span>
-          0
-          <span class="product__number__plus">+</span>
+          <span
+            class="product__number__minus"
+            @click="() => { changeCartItemInfo(shopId, item._id, item, -1) }"
+          >-</span>
+          {{cartList?.[shopId]?.[item._id]?.count || 0}}
+          <span
+            class="product__number__plus"
+            @click="() => { changeCartItemInfo(shopId, item._id, item, 1) }"
+          >+</span>
         </div>
       </div>
     </div>
@@ -38,7 +44,8 @@
 <script>
 import { reactive, ref, toRefs, watchEffect } from 'vue'
 import { useRoute } from 'vue-router'
-import { get } from '@/utils/request'
+import { useStore } from 'vuex'
+import { get } from '../../utils/request'
 
 const categories = [
   {
@@ -68,11 +75,8 @@ const useTabEffect = () => {
 }
 
 // 列表内容相关的逻辑
-const useCurrentListEffect = (currentTab) => {
-  const route = useRoute()
-  const shopId = route.params.id
+const useCurrentListEffect = (currentTab, shopId) => {
   const content = reactive({ list: [] })
-
   const getContentData = async () => {
     const result = await get(`/api/shop/${shopId}/products`, {
       tab: currentTab.value
@@ -81,21 +85,54 @@ const useCurrentListEffect = (currentTab) => {
       content.list = result.data
     }
   }
-
   watchEffect(() => {
     getContentData()
   })
-
   const { list } = toRefs(content)
   return { list }
+}
+
+// 购物车相关逻辑
+const useCartEffect = () => {
+  const store = useStore()
+  const { cartList } = toRefs(store.state)
+  const changeCartItemInfo = (shopId, productId, productInfo, num) => {
+    store.commit('changeCartItemInfo', {
+      shopId,
+      productId,
+      productInfo,
+      num
+    })
+  }
+  return {
+    cartList,
+    changeCartItemInfo
+  }
 }
 
 export default {
   name: 'Content',
   setup () {
-    const { currentTab, handleTabClick } = useTabEffect()
-    const { list } = useCurrentListEffect(currentTab)
-    return { categories, currentTab, handleTabClick, list }
+    const route = useRoute()
+    const shopId = route.params.id
+    const {
+      currentTab,
+      handleTabClick
+    } = useTabEffect()
+    const { list } = useCurrentListEffect(currentTab, shopId)
+    const {
+      cartList,
+      changeCartItemInfo
+    } = useCartEffect()
+    return {
+      categories,
+      currentTab,
+      handleTabClick,
+      list,
+      cartList,
+      shopId,
+      changeCartItemInfo
+    }
   }
 }
 </script>
