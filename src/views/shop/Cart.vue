@@ -1,11 +1,19 @@
 <template>
   <div class="cart">
     <div class="product">
+      <div class="product__header">
+
+      </div>
       <template
         v-for="item in productList"
         :key="item._id"
       >
         <div class="product__item" v-if="item.count > 0">
+          <div
+            class="product__item__checked iconfont"
+            v-html="item.check ? '&#xe652;': '&#xe6f7;'"
+            @click="() => changeCartItemChecked(shopId, item._id)"
+          />
           <img class="product__item__img" :src="item.imgUrl" />
           <div class="product__item__detail">
             <h4 class="product__item__title">{{item.name}}</h4>
@@ -34,10 +42,10 @@
           src="http://www.dell-lee.com/imgs/vue3/basket.png"
           class="check__icon__img"
         />
-        <div class="check__icon__tag">{{total}}</div>
+        <div class="check__icon__tag">{{ total }}</div>
       </div>
       <div class="check__info">
-        总计：<span class="check__info__price">&yen; {{price}}</span>
+        总计：<span class="check__info__price">&yen; {{ price }}</span>
       </div>
       <div class="check__btn">去结算</div>
     </div>
@@ -53,6 +61,7 @@ import { useCommonEffect } from '@/views/shop/commonCartEffect'
 
 // 获取购物车信息逻辑
 const useCartEffect = () => {
+  const { changeCartItemInfo } = useCommonEffect()
   const store = useStore()
   const route = useRoute()
   const shopId = route.params.id
@@ -76,7 +85,9 @@ const useCartEffect = () => {
     if (productList) {
       for (const i in productList) {
         const product = productList[i]
-        count += (product.count * product.price)
+        if (product.check) {
+          count += (product.count * product.price)
+        }
       }
     }
     return count.toFixed(2)
@@ -86,7 +97,20 @@ const useCartEffect = () => {
     return cartList[shopId] || []
   })
 
-  return { total, price, productList }
+  const changeCartItemChecked = (shopId, productId) => {
+    store.commit('changeCartItemChecked', {
+      shopId,
+      productId
+    })
+  }
+
+  return {
+    total,
+    price,
+    productList,
+    changeCartItemInfo,
+    changeCartItemChecked
+  }
 }
 
 export default {
@@ -94,9 +118,21 @@ export default {
   setup () {
     const route = useRoute()
     const shopId = route.params.id
-    const { total, price, productList } = useCartEffect()
-    const { changeCartItemInfo } = useCommonEffect()
-    return { total, price, productList, shopId, changeCartItemInfo }
+    const {
+      total,
+      price,
+      productList,
+      changeCartItemInfo,
+      changeCartItemChecked
+    } = useCartEffect()
+    return {
+      total,
+      price,
+      productList,
+      shopId,
+      changeCartItemInfo,
+      changeCartItemChecked
+    }
   }
 }
 </script>
@@ -104,30 +140,48 @@ export default {
 <style lang="scss" scoped>
 @import '../../style/viriables.scss';
 @import '../../style/mixins.scss';
+
 .cart {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
 }
+
 .product {
   overflow-y: scroll;
   flex: 1;
   background: #FFF;
+
+  &__header {
+    height: .52rem;
+    border-bottom: 1px solid #F1F1F1;
+  }
+
   &__item {
     position: relative;
     display: flex;
     padding: .12rem 0;
     margin: 0 .16rem;
     border-bottom: .01rem solid $content-bgColor;
+
+    &__checked {
+      line-height: .5rem;
+      margin-right: .2rem;
+      color: #0091FF;
+      font-size: .2rem;
+    }
+
     &__detail {
       overflow: hidden;
     }
+
     &__img {
       width: .46rem;
       height: .46rem;
       margin-right: .16rem;
     }
+
     &__title {
       margin: 0;
       line-height: .2rem;
@@ -135,15 +189,18 @@ export default {
       color: $content-fontcolor;
       @include ellipsis;
     }
+
     &__price {
       margin: .06rem 0 0 0;
       line-height: .2rem;
       font-size: .14rem;
       color: $hightlight-fontColor;
     }
+
     &__yen {
       font-size: .12rem;
     }
+
     &__origin {
       margin-left: .06rem;
       line-height: .2rem;
@@ -151,12 +208,13 @@ export default {
       color: $light-fontColor;
       text-decoration: line-through;
     }
+
     .product__number {
       position: absolute;
       right: 0;
       bottom: .12rem;
-      &__minus, &__plus
-      {
+
+      &__minus, &__plus {
         display: inline-block;
         width: .2rem;
         height: .2rem;
@@ -165,11 +223,13 @@ export default {
         font-size: .2rem;
         text-align: center;
       }
+
       &__minus {
         border: .01rem solid $medium-fontColor;
         color: $medium-fontColor;
         margin-right: .05rem;
       }
+
       &__plus {
         background: $btn-bgColor;
         color: $bgColor;
@@ -178,20 +238,24 @@ export default {
     }
   }
 }
+
 .check {
   display: flex;
   height: .49rem;
   border-top: .01rem solid $content-bgColor;
   line-height: .49rem;
+
   &__icon {
     position: relative;
     width: .84rem;
+
     &__img {
       display: block;
       margin: .12rem auto;
       width: .28rem;
       height: .26rem;
     }
+
     &__tag {
       position: absolute;
       left: .46rem;
@@ -209,16 +273,19 @@ export default {
       transform-origin: left center;
     }
   }
+
   &__info {
     flex: 1;
     color: $content-fontcolor;
     font-size: .12rem;
+
     &__price {
       line-height: .49rem;
       color: $hightlight-fontColor;
       font-size: .18rem;
     }
   }
+
   &__btn {
     width: .98rem;
     background-color: #4FB0F9;

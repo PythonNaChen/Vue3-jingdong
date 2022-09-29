@@ -39,6 +39,9 @@ export default createStore({
         product.count = 0
       }
       product.count = product.count + payload.num
+      if (payload.num > 0) {
+        product.check = true
+      }
       if (product.count < 0) {
         product.count = 0
       }
@@ -46,6 +49,11 @@ export default createStore({
       shopInfo[productId] = product
       // 更新商铺信息
       state.cartList[shopId] = shopInfo
+    },
+    changeCartItemChecked (state, payload) {
+      const { shopId, productId } = payload
+      const product = state.cartList[shopId][productId]
+      product.check = !product.check
     }
   },
   actions: {},
