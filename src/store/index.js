@@ -22,7 +22,7 @@ export default Vuex.createStore({
         productId,
         productInfo
       } = payload
-      let shopInfo = state.cartList[shopId] || {
+      const shopInfo = state.cartList[shopId] || {
         shopName: '',
         productList: {}
       }
