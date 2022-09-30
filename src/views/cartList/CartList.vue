@@ -1,5 +1,5 @@
 <template>
-  <div class="cart">作业部分代码，同学尝试实现</div>
+  <div class="cart">购物车页面</div>
 </template>
 
 <script>
