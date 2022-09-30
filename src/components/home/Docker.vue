@@ -6,8 +6,10 @@
       class="docker__item "
       :key="item.icon"
     >
-      <div class="iconfont" v-html="item.icon" />
-      <div class="docker__title">{{ item.text }}</div>
+      <router-link :to='item.to'>
+        <div class="iconfont" v-html="item.icon" />
+        <div class="docker__title">{{ item.text }}</div>
+      </router-link>
     </div>
   </div>
 </template>
@@ -19,28 +21,32 @@ export default {
     const dockerList = [
       {
         icon: '&#xe6f3;',
-        text: '首页'
+        text: '首页',
+        to: { name: 'Home' }
       },
       {
         icon: '&#xe7e5;',
-        text: '购物车'
+        text: '购物车',
+        to: { name: 'CartList' }
       },
       {
         icon: '&#xe61e;',
-        text: '订单'
+        text: '订单',
+        to: { name: 'Home' }
       },
       {
         icon: '&#xe660;',
-        text: '我的'
-      },
+        text: '我的',
+        to: { name: 'Home' }
+      }
     ]
     return { dockerList }
   }
 }
 </script>
 
-<style scoped lang="scss">
-@import '../../style/viriables';
+<style lang="scss" scoped>
+@import '../../style/viriables.scss';
 
 .docker {
   display: flex;
@@ -52,11 +58,15 @@ export default {
   width: 100%;
   height: .49rem;
   border-top: .01rem solid $content-bgColor;
-  color: $content-fontcolor;
 
   &__item {
     flex: 1;
     text-align: center;
+
+    a {
+      color: $content-fontcolor;
+      text-decoration: none;
+    }
 
     .iconfont {
       margin: .07rem 0 .02rem 0;
@@ -64,7 +74,9 @@ export default {
     }
 
     &--active {
-      color: #1FA4FC;
+      a {
+        color: #1FA4FC;
+      }
     }
   }
 
