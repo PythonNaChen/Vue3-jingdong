@@ -10,15 +10,35 @@ yarn install
 yarn serve
 ```
 
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
 ### Customize configuration
-123123
+Vue3的练习作品<br/>
+项目功能：登陆注册· 首页展示· 商户详情· 订单管理
+Vue 技术应用：<br/>
+· Composition API<br/>
+· VueCLI<br/>
+· Vue-Router<br/>
+· VueX<br/>
+——————————————<br/>
+This is a Vue3 practice works<br/>
+Project function: login registration · homepage display · merchant details · order management
+Vue technology application:<br/>
+· Composition API<br/>
+· VueCLI<br/>
+· Vue-Router<br/>
+· VueX<br/>
+——————————————<br/>
+これはVue3の練習作品です<br/>
+プロジェクト機能：ログイン登録・ホームページ表示・加盟店詳細・注文管理<br/>
+Vue テクノロジーの適用:<br/>
+・コンポジションAPI<br/>
+· VueCLI<br/>
+· Vue-Router<br/>
+・VueX<br/><br/>
+![img.png](src/assets/img.png)
+![img_1.png](src/assets/img_1.png)
+![img_2.png](src/assets/img_2.png)
+![img_3.png](src/assets/img_3.png)
+![img_4.png](src/assets/img_4.png)
+![img_5.png](src/assets/img_5.png)
+![img_6.png](src/assets/img_6.png)
+![img_7.png](src/assets/img_7.png)

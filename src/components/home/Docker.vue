@@ -37,7 +37,7 @@ export default {
       {
         icon: '&#xe660;',
         text: '我的',
-        to: { name: 'Home' }
+        to: { name: 'MinePage' }
       }
     ]
     return { dockerList }
