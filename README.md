@@ -30,10 +30,10 @@ Vue technology application:<br/>
 これはVue3の練習作品です<br/><br/>
 プロジェクト機能：ログイン登録・ホームページ表示・加盟店詳細・注文管理<br/><br/>
 Vue テクノロジーの適用:<br/>
-・コンポジションAPI<br/>
+· コンポジションAPI<br/>
 · VueCLI<br/>
 · Vue-Router<br/>
-・VueX<br/><br/>
+· VueX<br/><br/>
 ![img.png](src/assets/img.png)
 ![img_1.png](src/assets/img_1.png)
 ![img_2.png](src/assets/img_2.png)
